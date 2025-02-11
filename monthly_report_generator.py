@@ -94,6 +94,16 @@ class MonthlyReportGenerator:
         # 结果显示区
         result_frame = ttk.LabelFrame(self.generate_frame, text="生成结果")
         result_frame.pack(fill='both', expand=True, padx=5, pady=5)
+        
+        # 添加复制按钮和结果文本框到同一个框架
+        result_controls = ttk.Frame(result_frame)
+        result_controls.pack(fill='x', padx=5, pady=2)
+        
+        # 复制按钮
+        copy_btn = ttk.Button(result_controls, text="复制结果", command=self.copy_result)
+        copy_btn.pack(side='right', padx=5)
+        
+        # 结果文本框
         self.result_text = tk.Text(result_frame)
         self.result_text.pack(fill='both', expand=True, padx=5, pady=5)
     
@@ -401,6 +411,18 @@ class MonthlyReportGenerator:
             self.result_text.delete(1.0, tk.END)
             self.result_text.insert(tk.END, f"生成错误：{str(e)}")
             print(f"详细错误：{str(e)}")
+    
+    def copy_result(self):
+        """复制结果到剪贴板"""
+        result = self.result_text.get(1.0, tk.END).strip()
+        if result:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(result)
+            # 在状态栏或文本框底部显示提示
+            current_text = self.result_text.get(1.0, tk.END)
+            if not current_text.endswith('\n\n复制成功！\n'):
+                self.result_text.insert(tk.END, '\n\n复制成功！\n')
+                self.result_text.see(tk.END)  # 滚动到底部
 
 def main():
     root = tk.Tk()
